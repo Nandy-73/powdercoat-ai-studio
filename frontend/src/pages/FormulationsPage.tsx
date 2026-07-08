@@ -57,7 +57,7 @@ export default function FormulationsPage() {
 function FormulationCard({ formulation: f }: { formulation: Formulation }) {
   return (
     <Link to={`/formulations/${f.id}`}>
-      <Card className="h-full transition hover:-translate-y-0.5 hover:shadow-lg">
+      <Card hover className="h-full">
         <div className="flex items-start justify-between gap-2">
           <div>
             <p className="text-xs font-mono font-semibold text-brand-600 dark:text-brand-400">{f.code}</p>

@@ -7,79 +7,126 @@
 :root {
   color-scheme: light;
 }
-
 .dark {
   color-scheme: dark;
 }
 
+/* Spatial canvas — a deep, luminous backdrop that content floats above */
 body {
-  @apply bg-surface-light text-slate-800 antialiased dark:bg-surface-dark dark:text-slate-200;
+  @apply text-slate-800 antialiased dark:text-slate-100;
+  background:
+    radial-gradient(1200px 800px at 12% -10%, rgba(51, 128, 252, 0.18), transparent 60%),
+    radial-gradient(1000px 700px at 100% 0%, rgba(139, 92, 246, 0.16), transparent 55%),
+    radial-gradient(900px 900px at 50% 120%, rgba(16, 185, 129, 0.12), transparent 55%),
+    linear-gradient(180deg, #eef1f8 0%, #e6ebf6 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.dark body {
+  background:
+    radial-gradient(1200px 800px at 12% -10%, rgba(51, 128, 252, 0.22), transparent 60%),
+    radial-gradient(1000px 700px at 100% 0%, rgba(139, 92, 246, 0.20), transparent 55%),
+    radial-gradient(900px 900px at 50% 120%, rgba(16, 185, 129, 0.14), transparent 55%),
+    linear-gradient(180deg, #05060f 0%, #080b1a 60%, #05060f 100%);
 }
 
-/* Glassmorphism surfaces */
+/* ---------- Spatial glass surfaces ---------- */
+/* Floating translucent panels with layered depth (top highlight + ambient shadow). */
 .glass {
-  @apply rounded-2xl border border-white/60 bg-white/70 shadow-glass backdrop-blur-xl
-    dark:border-white/10 dark:bg-white/5 dark:shadow-glass-dark;
+  @apply rounded-3xl border border-white/50 bg-white/55 shadow-spatial backdrop-blur-2xl
+    dark:border-white/10 dark:bg-white/[0.04] dark:shadow-spatial-dark;
 }
 
 .glass-strong {
-  @apply rounded-2xl border border-white/70 bg-white/90 shadow-glass backdrop-blur-xl
-    dark:border-white/10 dark:bg-slate-900/80 dark:shadow-glass-dark;
+  @apply rounded-3xl border border-white/60 bg-white/80 shadow-spatial-lg backdrop-blur-3xl
+    dark:border-white/10 dark:bg-slate-900/70 dark:shadow-spatial-dark-lg;
 }
 
-/* Inputs */
+/* Subtle inner luminosity for large panels */
+.glass::before,
+.glass-strong::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), transparent 40%);
+  pointer-events: none;
+}
+
+/* ---------- Inputs ---------- */
 .input {
-  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none
-    transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30
-    dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100;
+  @apply w-full rounded-2xl border border-white/60 bg-white/70 px-3.5 py-2.5 text-sm text-slate-800 outline-none
+    backdrop-blur-md transition placeholder:text-slate-400
+    focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-500/20
+    dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-100 dark:focus:bg-white/[0.07];
 }
 
 .label {
-  @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400;
+  @apply mb-1.5 block text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400;
 }
 
-/* Buttons */
+/* ---------- Buttons (raised spatial chips) ---------- */
 .btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold
-    transition focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
+    transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-500/25
+    active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .btn-primary {
-  @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800;
+  @apply btn bg-gradient-to-b from-brand-500 to-brand-700 text-white
+    shadow-[0_6px_16px_-4px_rgba(29,96,241,0.6),inset_0_1px_0_0_rgba(255,255,255,0.25)]
+    hover:from-brand-400 hover:to-brand-600 hover:shadow-glow-brand;
 }
 
 .btn-secondary {
-  @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50
-    dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800;
+  @apply btn border border-white/60 bg-white/60 text-slate-700 backdrop-blur-md
+    shadow-spatial hover:bg-white/85
+    dark:border-white/10 dark:bg-white/[0.05] dark:text-slate-200 dark:shadow-spatial-dark dark:hover:bg-white/10;
 }
 
 .btn-danger {
-  @apply btn bg-rose-600 text-white hover:bg-rose-700;
+  @apply btn bg-gradient-to-b from-rose-500 to-rose-700 text-white
+    shadow-[0_6px_16px_-4px_rgba(225,29,72,0.55),inset_0_1px_0_0_rgba(255,255,255,0.25)] hover:from-rose-400 hover:to-rose-600;
 }
 
-/* Table */
+/* ---------- Tables ---------- */
 .table-base {
   @apply w-full border-collapse text-left text-sm;
 }
 .table-base thead th {
-  @apply border-b border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-500
-    dark:border-slate-700 dark:text-slate-400;
+  @apply border-b border-white/40 px-3 py-2.5 text-[11px] font-semibold uppercase tracking-widest text-slate-500
+    dark:border-white/10 dark:text-slate-400;
 }
 .table-base tbody td {
-  @apply border-b border-slate-100 px-3 py-2.5 dark:border-slate-800;
+  @apply border-b border-white/25 px-3 py-2.5 dark:border-white/[0.06];
 }
 .table-base tbody tr {
-  @apply transition hover:bg-brand-50/60 dark:hover:bg-white/5;
+  @apply transition-colors hover:bg-white/40 dark:hover:bg-white/[0.04];
 }
 
-/* Scrollbars */
+/* ---------- Scrollbars ---------- */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-slate-300 dark:bg-slate-700;
+  @apply rounded-full bg-slate-400/40 dark:bg-white/10;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* ---------- Ambient floating orbs (spatial depth layer) ---------- */
+.spatial-orbs {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.spatial-orbs span {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.55;
 }

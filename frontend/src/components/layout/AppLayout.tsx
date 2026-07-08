@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { useState } from "react";
+import { SpatialBackground } from "../ui";
 
 const NAV = [
   {
@@ -72,10 +73,11 @@ export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
+    <div className="relative flex min-h-screen">
+      <SpatialBackground />
+      {/* Sidebar — floating spatial glass rail */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform border-r border-slate-200/60 bg-white/80 backdrop-blur-xl transition-transform dark:border-white/10 dark:bg-slate-950/80 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 transform border-r border-white/40 bg-white/60 backdrop-blur-3xl transition-transform dark:border-white/10 dark:bg-slate-950/60 lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -104,10 +106,10 @@ export default function AppLayout() {
                     end={item.to === "/"}
                     onClick={() => setSidebarOpen(false)}
                     className={({ isActive }) =>
-                      `flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition ${
+                      `flex items-center gap-2.5 rounded-2xl px-2.5 py-2 text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? "bg-brand-600/10 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300"
-                          : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5"
+                          ? "border border-brand-400/30 bg-brand-500/15 text-brand-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_0_20px_-6px_rgba(51,128,252,0.6)] dark:text-brand-200"
+                          : "border border-transparent text-slate-600 hover:bg-white/50 dark:text-slate-400 dark:hover:bg-white/[0.06]"
                       }`
                     }
                   >
@@ -129,8 +131,8 @@ export default function AppLayout() {
       )}
 
       {/* Main */}
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-slate-200/60 bg-white/70 px-4 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70 lg:px-6">
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-white/30 bg-white/50 px-4 backdrop-blur-3xl dark:border-white/10 dark:bg-slate-950/50 lg:px-6">
           <div className="flex items-center gap-3">
             <button
               className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 lg:hidden"
