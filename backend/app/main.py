@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -15,6 +16,23 @@ setup_logging()
 logger = get_logger("main")
 
 
+async def _auto_ingest_loop():
+    """Periodically scan active machinery sources while the app is running."""
+    from app.ai.machinery_intel import run_ingestion
+
+    interval = max(1, settings.AUTO_INGEST_HOURS) * 3600
+    while True:
+        await asyncio.sleep(interval)
+        db = SessionLocal()
+        try:
+            result = await asyncio.to_thread(run_ingestion, db)
+            logger.info("Auto machinery scan: %s new suggestion(s)", result["new_suggestions"])
+        except Exception:
+            logger.exception("Auto machinery scan failed")
+        finally:
+            db.close()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
@@ -26,8 +44,16 @@ async def lifespan(app: FastAPI):
             seed(db)
         finally:
             db.close()
+
+    task = None
+    if settings.AUTO_INGEST_ENABLED:
+        task = asyncio.create_task(_auto_ingest_loop())
+
     logger.info("%s started (%s)", settings.APP_NAME, settings.ENVIRONMENT)
     yield
+
+    if task:
+        task.cancel()
 
 
 app = FastAPI(

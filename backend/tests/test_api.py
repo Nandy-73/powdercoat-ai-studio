@@ -109,6 +109,56 @@ def test_reports_csv(client, auth_headers):
     assert "Code,Name,Category" in resp.text
 
 
+def test_machine_crud(client, auth_headers):
+    # create
+    resp = client.post(
+        "/api/v1/machinery",
+        json={"name": "Test Extruder X1", "machine_type": "extruder",
+              "manufacturer": "ACME", "country": "Germany", "capacity": "300 kg/h"},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 201, resp.text
+    mid = resp.json()["id"]
+    # update
+    upd = client.patch(f"/api/v1/machinery/{mid}", json={"energy_kw": 45}, headers=auth_headers)
+    assert upd.status_code == 200 and upd.json()["energy_kw"] == 45
+    # delete
+    assert client.delete(f"/api/v1/machinery/{mid}", headers=auth_headers).status_code == 204
+
+
+def test_machine_suggestion_flow(client, auth_headers):
+    # create a source (inactive so no network call)
+    src = client.post(
+        "/api/v1/machinery/sources",
+        json={"name": "T", "url": "https://example.com", "active": False},
+        headers=auth_headers,
+    )
+    assert src.status_code == 201
+    # seeded sources present
+    sources = client.get("/api/v1/machinery/sources", headers=auth_headers).json()
+    assert len(sources) >= 1
+
+    # manually insert a suggestion via the DB path is not exposed; instead verify
+    # the suggestions endpoint responds and approve/reject guard 404s cleanly.
+    pending = client.get("/api/v1/machinery/suggestions", headers=auth_headers)
+    assert pending.status_code == 200
+    assert client.post("/api/v1/machinery/suggestions/999999/approve", headers=auth_headers).status_code == 404
+
+
+def test_heuristic_extractor():
+    from app.ai.machinery_intel import extract_machines_heuristic
+
+    text = (
+        "The new ACM Grinding Mill ACM-45 delivers up to 400 kg/h and draws 55 kW. "
+        "Our Twin-Screw Extruder ZSK-70 processes 900 kg/h for premium powder coatings."
+    )
+    out = extract_machines_heuristic(text, "Test", "https://example.com")
+    types = {m["machine_type"] for m in out}
+    assert "grinding" in types
+    assert "extruder" in types
+    assert any(m["capacity"] for m in out)
+
+
 def test_viewer_cannot_create_material(client):
     login = client.post(
         "/api/v1/auth/login/json",

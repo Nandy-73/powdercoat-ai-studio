@@ -10,6 +10,7 @@ from app.models import (
     Formulation,
     FormulationItem,
     FormulationVersion,
+    IngestionSource,
     Machine,
     MarketInsight,
     Material,
@@ -40,6 +41,7 @@ def seed(db: Session) -> None:
     _suppliers(db)
     _prices(db)
     _machines(db)
+    _ingestion_sources(db)
     _market(db)
     _ral(db)
     _formulations(db, materials)
@@ -311,6 +313,21 @@ def _machines(db: Session) -> None:
                 warranty_years=warranty, specs=json.dumps(specs),
             )
         )
+    db.flush()
+
+
+def _ingestion_sources(db: Session) -> None:
+    """Example pages the AI machinery scan reads. Replace with your own supplier /
+    news pages. Kept inactive by default so no external fetch happens until you
+    review and enable them from the Machinery page."""
+    rows = [
+        ("Wikipedia — Powder coating (equipment overview)",
+         "https://en.wikipedia.org/wiki/Powder_coating", False),
+        ("Example supplier news page (edit me)",
+         "https://en.wikipedia.org/wiki/Extrusion", False),
+    ]
+    for name, url, active in rows:
+        db.add(IngestionSource(name=name, url=url, active=active))
     db.flush()
 
 

@@ -201,6 +201,39 @@ export interface Machine {
   specs: string;
 }
 
+export interface IngestionSource {
+  id: number;
+  name: string;
+  url: string;
+  active: boolean;
+  last_run_at: string | null;
+  last_status: string;
+}
+
+export interface MachineSuggestion {
+  id: number;
+  name: string;
+  machine_type: string;
+  manufacturer: string;
+  country: string;
+  capacity: string;
+  estimated_price_usd: number;
+  energy_kw: number;
+  source_name: string;
+  source_url: string;
+  excerpt: string;
+  confidence: number;
+  method: string;
+  status: string;
+  created_at: string;
+}
+
+export interface IngestRunResult {
+  sources_scanned: number;
+  new_suggestions: number;
+  details: string[];
+}
+
 export interface MarketInsight {
   id: number;
   category: string;

@@ -19,6 +19,15 @@ class Settings(BaseSettings):
 
     SEED_DATA: bool = True
 
+    # --- Machinery AI ingestion ---
+    # Optional LLM extraction (Anthropic). Leave key empty to use the built-in
+    # heuristic extractor (no key, no cost).
+    LLM_API_KEY: str = ""
+    LLM_MODEL: str = "claude-haiku-4-5-20251001"
+    # Automatic daily scan of active sources while the app is running.
+    AUTO_INGEST_ENABLED: bool = True
+    AUTO_INGEST_HOURS: int = 24
+
     CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
         "http://localhost:5173",
